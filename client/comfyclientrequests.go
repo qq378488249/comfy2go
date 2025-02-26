@@ -41,7 +41,7 @@ func (c *ComfyClient) GetSystemStats() (*SystemStats, error) {
 		return nil, err
 	}
 
-	resp, err := c.httpclient.Get(fmt.Sprintf("http://%s/system_stats", c.serverBaseAddress))
+	resp, err := c.httpclient.Get(fmt.Sprintf("%s/system_stats", c.serverBaseAddress))
 	if err != nil {
 		return nil, err
 	}
@@ -80,7 +80,7 @@ func (c *ComfyClient) GetPromptHistoryByIndex() ([]PromptHistoryItem, error) {
 }
 
 func (c *ComfyClient) GetPromptHistoryByID() (map[string]PromptHistoryItem, error) {
-	resp, err := c.httpclient.Get(fmt.Sprintf("http://%s/history", c.serverBaseAddress))
+	resp, err := c.httpclient.Get(fmt.Sprintf("%s/history", c.serverBaseAddress))
 	if err != nil {
 		return nil, err
 	}
@@ -165,7 +165,7 @@ func (c *ComfyClient) GetPromptHistoryByID() (map[string]PromptHistoryItem, erro
 // onnx
 // fonts
 func (c *ComfyClient) GetViewMetadata(folder string, file string) (string, error) {
-	resp, err := c.httpclient.Get(fmt.Sprintf("http://%s/view_metadata/%s?filename=%s", c.serverBaseAddress, folder, file))
+	resp, err := c.httpclient.Get(fmt.Sprintf("%s/view_metadata/%s?filename=%s", c.serverBaseAddress, folder, file))
 	if err != nil {
 		return "", err
 	}
@@ -180,7 +180,7 @@ func (c *ComfyClient) GetImage(image_data DataOutput) (*[]byte, error) {
 	params.Add("filename", image_data.Filename)
 	params.Add("subfolder", image_data.Subfolder)
 	params.Add("type", image_data.Type)
-	resp, err := c.httpclient.Get(fmt.Sprintf("http://%s/view?%s", c.serverBaseAddress, params.Encode()))
+	resp, err := c.httpclient.Get(fmt.Sprintf("%s/view?%s", c.serverBaseAddress, params.Encode()))
 
 	if err != nil {
 		return nil, err
@@ -192,7 +192,7 @@ func (c *ComfyClient) GetImage(image_data DataOutput) (*[]byte, error) {
 
 // GetEmbeddings retrieves the list of Embeddings models installed on the ComfyUI server.
 func (c *ComfyClient) GetEmbeddings() ([]string, error) {
-	resp, err := c.httpclient.Get(fmt.Sprintf("http://%s/embeddings", c.serverBaseAddress))
+	resp, err := c.httpclient.Get(fmt.Sprintf("%s/embeddings", c.serverBaseAddress))
 	if err != nil {
 		return nil, err
 	}
@@ -208,7 +208,7 @@ func (c *ComfyClient) GetEmbeddings() ([]string, error) {
 }
 
 func (c *ComfyClient) GetQueueExecutionInfo() (*QueueExecInfo, error) {
-	resp, err := c.httpclient.Get(fmt.Sprintf("http://%s/prompt", c.serverBaseAddress))
+	resp, err := c.httpclient.Get(fmt.Sprintf("%s/prompt", c.serverBaseAddress))
 	if err != nil {
 		return nil, err
 	}
@@ -225,7 +225,7 @@ func (c *ComfyClient) GetQueueExecutionInfo() (*QueueExecInfo, error) {
 
 // GetExtensions retrieves the list of extensions installed on the ComfyUI server.
 func (c *ComfyClient) GetExtensions() ([]string, error) {
-	resp, err := c.httpclient.Get(fmt.Sprintf("http://%s/extensions", c.serverBaseAddress))
+	resp, err := c.httpclient.Get(fmt.Sprintf("%s/extensions", c.serverBaseAddress))
 	if err != nil {
 		return nil, err
 	}
@@ -241,7 +241,7 @@ func (c *ComfyClient) GetExtensions() ([]string, error) {
 }
 
 func (c *ComfyClient) GetObjectInfos() (*graphapi.NodeObjects, error) {
-	resp, err := c.httpclient.Get(fmt.Sprintf("http://%s/object_info", c.serverBaseAddress))
+	resp, err := c.httpclient.Get(fmt.Sprintf("%s/object_info", c.serverBaseAddress))
 
 	if err != nil {
 		return nil, err
@@ -275,7 +275,7 @@ func (c *ComfyClient) QueuePrompt(graph *graphapi.Graph) (*QueueItem, error) {
 	defer c.webSocket.UnlockRead()
 
 	data, _ := json.Marshal(prompt)
-	resp, err := c.httpclient.Post(fmt.Sprintf("http://%s/prompt", c.serverBaseAddress), "application/json", strings.NewReader(string(data)))
+	resp, err := c.httpclient.Post(fmt.Sprintf("%s/prompt", c.serverBaseAddress), "application/json", strings.NewReader(string(data)))
 
 	if err != nil {
 		return nil, err
@@ -314,7 +314,7 @@ func (c *ComfyClient) QueuePrompt(graph *graphapi.Graph) (*QueueItem, error) {
 }
 
 func (c *ComfyClient) Interrupt() error {
-	resp, err := c.httpclient.Post(fmt.Sprintf("http://%s/interrupt", c.serverBaseAddress), "application/json", strings.NewReader("{}"))
+	resp, err := c.httpclient.Post(fmt.Sprintf("%s/interrupt", c.serverBaseAddress), "application/json", strings.NewReader("{}"))
 	if err != nil {
 		return err
 	}
@@ -326,7 +326,7 @@ func (c *ComfyClient) Interrupt() error {
 func (c *ComfyClient) EraseHistory() error {
 	// delete post takes an array of IDs. We'll provide a single ID in a json array
 	data := "{\"clear\": \"clear\"}"
-	resp, err := c.httpclient.Post(fmt.Sprintf("http://%s/history", c.serverBaseAddress), "application/json", strings.NewReader(data))
+	resp, err := c.httpclient.Post(fmt.Sprintf("%s/history", c.serverBaseAddress), "application/json", strings.NewReader(data))
 	if err != nil {
 		return err
 	}
@@ -338,7 +338,7 @@ func (c *ComfyClient) EraseHistory() error {
 func (c *ComfyClient) EraseHistoryItem(promptID string) error {
 	// delete post takes an array of IDs. We'll provide a single ID in a json array
 	item := fmt.Sprintf("{\"delete\": [\"%s\"]}", promptID)
-	resp, err := c.httpclient.Post(fmt.Sprintf("http://%s/history", c.serverBaseAddress), "application/json", strings.NewReader(item))
+	resp, err := c.httpclient.Post(fmt.Sprintf("%s/history", c.serverBaseAddress), "application/json", strings.NewReader(item))
 	if err != nil {
 		return err
 	}
