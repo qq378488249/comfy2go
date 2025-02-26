@@ -3,7 +3,6 @@ package client
 import (
 	"fmt"
 	"net/http"
-	"strconv"
 	"strings"
 	"time"
 
@@ -20,13 +19,18 @@ const (
 // NewComfyClient creates a new instance of a Comfy2go client
 func NewComfyClientWithProtocolType(server_address string, server_port int, protocolType string, callbacks *ComfyClientCallbacks) *ComfyClient {
 	cid := strings.ReplaceAll(uuid.New().String(), "-", "")
+	if protocolType != Https {
+		// default http
+		protocolType = Http
+	}
+	sbaseaddr := fmt.Sprintf("%s://%s:%d", protocolType, server_address, server_port)
+
 	wsType := Ws
 	if protocolType == Https {
 		wsType = Wss
 	}
 	webSocketURL := fmt.Sprintf("%s://%s:%d/ws?clientId=%s", wsType, server_address, server_port, cid)
 
-	sbaseaddr := protocolType + "://" + server_address + ":" + strconv.Itoa(server_port)
 	retv := &ComfyClient{
 		serverBaseAddress: sbaseaddr,
 		serverAddress:     server_address,
