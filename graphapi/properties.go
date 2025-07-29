@@ -473,7 +473,7 @@ func (p *FloatProperty) valueFromString(value string) interface{} {
 
 type StringProperty struct {
 	BaseProperty
-	Default   string
+	Default   interface{}
 	Multiline bool
 }
 
@@ -488,7 +488,7 @@ func newStringProperty(input_name string, optional bool, data interface{}, index
 	if d, ok := data.(map[string]interface{}); ok {
 		// default?
 		if val, ok := d["default"]; ok {
-			c.Default = val.(string)
+			c.Default = val.(interface{})
 		}
 
 		// multiline?
